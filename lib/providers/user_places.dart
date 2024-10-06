@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:favouriteplacesall/models/places.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+
 class UserPlaceNotifier extends StateNotifier<List<Places>> {
   UserPlaceNotifier() : super(const []);
 
