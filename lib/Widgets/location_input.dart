@@ -6,7 +6,8 @@ import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
 class LocationInput extends StatefulWidget {
-  const LocationInput({super.key});
+  const LocationInput({super.key, required this.onSelectLocation});
+  final void Function(PlaceLocation location) onSelectLocation;
 
   @override
   State<LocationInput> createState() => _LocationInputState();
@@ -15,6 +16,16 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   PlaceLocation? _pickedlocation;
   var _isLoading = false;
+
+  String get locationImage {
+    if (_pickedlocation == null) {
+      return '';
+    }
+    final lat = _pickedlocation!.lat;
+    final lng = _pickedlocation!.lng;
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=16&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C$lat,$lng&key=AIzaSyBc4KqWTigM0tyNQGmZehOx_MbA5NhYzKo';
+  }
+
   void _getCurrentLocation() async {
     Location location = Location();
 
@@ -51,7 +62,7 @@ class _LocationInputState extends State<LocationInput> {
     }
 
     final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=AIzaSyCb7B6hIN-GgGNgLfoIHyTyIbkzM75ZbRM');
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=AIzaSyBc4KqWTigM0tyNQGmZehOx_MbA5NhYzKo');
     final response = await http.get(url);
     final resData = json.decode(response.body);
     final address = resData['results'][0]['formatted_address'];
@@ -64,6 +75,7 @@ class _LocationInputState extends State<LocationInput> {
       );
       _isLoading = false;
     });
+    widget.onSelectLocation(_pickedlocation!);
   }
 
   @override
@@ -76,6 +88,15 @@ class _LocationInputState extends State<LocationInput> {
           .bodyLarge!
           .copyWith(color: Theme.of(context).colorScheme.primary),
     );
+    if (_pickedlocation != null) {
+      previewContent = Image.network(
+        locationImage,
+        fit: BoxFit.cover,
+        height: double.infinity,
+        width: double.infinity,
+      );
+    }
+
     if (_isLoading) {
       previewContent = const CircularProgressIndicator();
     }
