@@ -37,8 +37,10 @@ class PlaceDetailsScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) =>
-                            Mapscreen(location: place.location),
+                        builder: (context) => Mapscreen(
+                          location: place.location,
+                          isSelecting: false,
+                        ),
                       ),
                     );
                   },
